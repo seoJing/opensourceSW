@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: suwon-trip-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/suwon_trip}
+    username: ${SPRING_DATASOURCE_USERNAME:suwon_app}
+    password: ${SPRING_DATASOURCE_PASSWORD:local_dev_only_password}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-components: always
+      show-details: never
