@@ -1,0 +1,40 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+coverage/
+frontend/coverage/
+
+# Java / Maven
+target/
+backend/target/
+.mvn/timing.properties
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# IDEs and editors
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Test and tool caches
+.eslintcache
+.vite/
+.vitest/
