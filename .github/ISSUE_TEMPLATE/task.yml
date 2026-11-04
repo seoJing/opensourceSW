@@ -1,7 +1,14 @@
 name: 작업 계획
 description: 초기 구축과 기능 개발의 작업 범위 및 충돌 가능성을 먼저 정리합니다.
-title: "[작업] "
+title: "[유형]: "
 body:
+  - type: markdown
+    attributes:
+      value: |
+        제목을 `[유형]: 제목`으로 작성하세요.
+        예시 `[Feature]: 상태 카드 추가`
+        유형은 Feature, Fix, Refactor, Chore, Docs 중 하나를 사용하세요.
+        이슈 번호는 생성할 때 자동으로 붙습니다. 이후 이 번호로 작업 브랜치 하나와 PR 하나를 연결하세요.
   - type: textarea
     id: purpose
     attributes:
