@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import App from './App.jsx'
+import StatusPage from './StatusPage'
 
-describe('App', () => {
+describe('StatusPage', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
   })
@@ -10,7 +10,7 @@ describe('App', () => {
   it('초기 개발 환경과 백엔드 상태 영역을 렌더링한다', () => {
     vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})))
 
-    render(<App />)
+    render(<StatusPage />)
 
     expect(screen.getByRole('heading', { name: '수원 랜덤 여행 코스' })).toBeInTheDocument()
     expect(screen.getByText('초기 개발 환경')).toBeInTheDocument()
@@ -27,7 +27,7 @@ describe('App', () => {
       }),
     )
 
-    render(<App />)
+    render(<StatusPage />)
 
     expect(await screen.findByText('연결됨 (UP)')).toBeInTheDocument()
     expect(screen.getByText('Spring Boot와 PostgreSQL 연결이 정상입니다.')).toBeInTheDocument()

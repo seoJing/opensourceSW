@@ -49,7 +49,7 @@ Docker Compose는 `frontend`, `backend`, `db` 세 서비스만 기본 실행하�
 8. 테스트를 삭제·비활성화하거나 실패를 무시해서 통과시키지 않습니다.
 9. 오류를 숨기는 빈 예외 처리나 강제 성공 처리를 추가하지 않습니다.
 10. `.env`, 키, 토큰, 비밀번호와 실제 비밀정보를 커밋하지 않습니다.
-11. `node_modules`, `target`, `dist`, coverage, 로그, 캐시와 기타 생성 파일을 커밋하지 않습니다. 단, 재현 가능한 설치를 위한 `package-lock.json`과 Maven Wrapper 파일은 커밋합니다.
+11. `node_modules`, `target`, `dist`, coverage, 로그, 캐시와 기타 생성 파일을 커밋하지 않습니다. 단, 재현 가능한 설치를 위한 `pnpm-lock.yaml`과 Maven Wrapper 파일은 커밋합니다.
 12. 작은 PR 단위로 변경하고 PR 하나에 한 가지 목적만 둡니다.
 
 ## 공동 작업과 초기 구축

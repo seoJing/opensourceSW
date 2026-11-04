@@ -11,7 +11,7 @@ import { changedPaths, conflictLines, overlaps, pathProblem, policy, prProblems,
 test('공통 구조 및 실행 설정은 감지하고 일반 기능 파일은 허용한다', () => {
   assert.deepEqual(sharedFiles([
     'frontend/src/features/example.jsx', 'backend/src/main/java/com/example/Example.java',
-    'frontend/package-lock.json', 'frontend/nginx.conf', 'backend/pom.xml',
+    'frontend/pnpm-lock.yaml', 'frontend/nginx.conf', 'backend/pom.xml',
     'docker-compose.yml', '.github/workflows/test.yml', 'frontend/AGENTS.md',
     '.agent/skills/repo-pr/SKILL.md',
   ]), ['.agent/skills/repo-pr/SKILL.md', '.github/workflows/test.yml', 'backend/pom.xml', 'docker-compose.yml',
@@ -42,7 +42,7 @@ test('환경 파일과 생성 파일은 실패하되 예시와 재현 가능한 
   for (const path of ['.env', 'backend/.env.local', 'frontend/dist/index.html', 'backend/target/app.jar', 'run.log']) {
     assert.ok(pathProblem(path), path)
   }
-  for (const path of ['.env.example', 'frontend/package-lock.json', 'backend/.mvn/wrapper/maven-wrapper.properties']) {
+  for (const path of ['.env.example', 'frontend/pnpm-lock.yaml', 'backend/.mvn/wrapper/maven-wrapper.properties']) {
     assert.equal(pathProblem(path), null, path)
   }
   assert.deepEqual(prProblems(['.env', 'frontend/dist/index.html'], '', []), [], '금지 파일 삭제는 허용')
