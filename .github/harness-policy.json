@@ -2,9 +2,9 @@
   "sharedFiles": [
     "AGENTS.md", "AGENT.md", "CONTRIBUTING.md", ".editorconfig", ".gitattributes",
     ".gitignore", "docker-compose.yml", ".env.example",
-    "frontend/package.json", "frontend/package-lock.json", "frontend/vite.config.js",
-    "frontend/eslint.config.js", "frontend/nginx.conf", "frontend/src/main.jsx",
-    "frontend/src/App.jsx", "frontend/src/styles.css", "frontend/src/test/setup.js",
+    "frontend/package.json", "frontend/pnpm-lock.yaml", "frontend/vite.config.js", "frontend/tsconfig.json",
+    "frontend/eslint.config.js", "frontend/nginx.conf", "frontend/src/app/main.tsx",
+    "frontend/src/app/App.tsx", "frontend/src/app/styles/global.css", "frontend/src/test/setup.ts",
     "backend/pom.xml", "backend/mvnw", "backend/mvnw.cmd",
     "backend/src/main/java/com/suwontrip/app/SuwonTripApplication.java"
   ],

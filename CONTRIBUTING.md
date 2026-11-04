@@ -48,7 +48,7 @@ main
 ## 변경 전 확인
 
 - 루트 `AGENTS.md`와 영역별 README를 먼저 확인합니다.
-- 프론트엔드는 `npm run lint`, `npm run test`, `npm run build`를 실행합니다.
+- 프론트엔드는 `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`를 실행합니다.
 - 백엔드는 `./mvnw test`와 `./mvnw package`를 실행합니다.
 - 통합 환경 변경은 `docker compose config`와 전체 실행을 확인합니다.
 - `.env`, 키, 토큰, 비밀번호, 개인 IDE 설정은 커밋하지 않습니다.

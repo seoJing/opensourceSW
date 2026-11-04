@@ -1,14 +1,15 @@
 FROM node:24.22.2-alpine3.23 AS dependencies
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./
+RUN npm install --global "$(node -p "require('./package.json').packageManager")" \
+    && pnpm install --frozen-lockfile
 
 FROM dependencies AS test
 COPY . .
-RUN npm run lint && npm run test
+RUN pnpm lint && pnpm typecheck && pnpm test
 
 FROM test AS build
-RUN npm run build
+RUN pnpm build
 
 FROM nginx:1.30.6-alpine3.24 AS runtime
 COPY nginx.conf /etc/nginx/conf.d/default.conf

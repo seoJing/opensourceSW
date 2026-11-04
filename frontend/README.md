@@ -15,12 +15,21 @@ docker build -t suwon-trip-frontend:local frontend
 
 ## 호스트에서 개발
 
-Node.js 24 LTS가 설치되어 있다면 다음 명령을 사용할 수 있습니다.
+Node.js 24 LTS와 `package.json`의 `packageManager`에 명시된 pnpm이 설치되어 있다면 다음 명령을 사용할 수 있습니다.
 
 ```sh
 cd frontend
-npm ci
-npm run dev
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
 개발 서버만 실행하면 `/api/health` 프록시는 제공되지 않습니다. 전체 연결 확인은 루트의 Docker Compose 실행을 사용합니다.
+
+## 파일 배치와 검증
+
+- `src/app`은 React 진입점, 화면 조립, 전역 스타일을 관리합니다.
+- `src/pages/<슬라이스>`에는 화면별 `ui`, `api` 등을 실제 코드가 생길 때 추가합니다.
+- 공통 UI와 기반 코드가 필요해지면 `shared`, 도메인·사용자 행동·조합 UI는 각각 `entities`, `features`, `widgets`에 둡니다.
+- 기존 상태 확인 화면은 `pages/status`에 있습니다. 테스트는 화면 파일 옆에 두고 공통 설정은 `src/test/setup.ts`에 둡니다.
+
+프론트 디렉터리에서 `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`를 실행합니다. 의존성을 바꾸면 `pnpm-lock.yaml`을 함께 반영합니다.
