@@ -15,7 +15,7 @@ test('공통 구조 및 실행 설정은 감지하고 일반 기능 파일은 �
     'docker-compose.yml', '.github/workflows/test.yml', 'frontend/AGENTS.md',
     '.agent/skills/repo-pr/SKILL.md',
   ]), ['.agent/skills/repo-pr/SKILL.md', '.github/workflows/test.yml', 'backend/pom.xml', 'docker-compose.yml',
-    'frontend/AGENTS.md', 'frontend/nginx.conf', 'frontend/package-lock.json'])
+    'frontend/AGENTS.md', 'frontend/nginx.conf', 'frontend/pnpm-lock.yaml'])
 })
 
 test('rename 이전 공통 경로와 삭제 파일도 검사한다', () => {
