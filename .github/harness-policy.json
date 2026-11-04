@@ -9,7 +9,7 @@
     "backend/src/main/java/com/suwontrip/app/SuwonTripApplication.java"
   ],
   "sharedPrefixes": [
-    ".github/", "scripts/", "backend/.mvn/", "backend/src/main/resources/",
+    ".github/", ".agent/skills/", "scripts/", "backend/.mvn/", "backend/src/main/resources/",
     "backend/src/test/resources/", "database/"
   ],
   "sharedBasenames": ["Dockerfile", ".dockerignore", "AGENTS.md"],
