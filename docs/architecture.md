@@ -24,3 +24,5 @@ PostgreSQL 데이터는 `suwon_trip_postgres_data` named volume에 저장됩니�
 ## 현재 범위
 
 현재 백엔드는 Actuator health endpoint만 제공하고, 프론트엔드는 실행 상태만 표시합니다. POI, 추천, 성향 테스트, 지도, 인증, 외부 API, AI 연동, 운영 배포와 모니터링은 설계하거나 구현하지 않았습니다.
+
+현재 배포 검증 대상은 로컬 Docker 시연입니다. CI가 이미지 빌드와 세 서비스 연결을 검증하며 외부 서버에 배포하지 않습니다. 공동 작업 하네스와 시연 점검 절차는 [공동 작업 가이드](collaboration.md)를 참고하세요.

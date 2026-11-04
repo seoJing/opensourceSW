@@ -6,13 +6,13 @@
 
 ```text
 main
-└─ develop
-   ├─ feature/frontend/<issue>-<name>
-   ├─ feature/backend/<issue>-<name>
-   ├─ feature/infra/<issue>-<name>
-   ├─ fix/<area>/<issue>-<name>
-   ├─ docs/<issue>-<name>
-   └─ chore/<issue>-<name>
+├─ feature/frontend/<issue>-<name>
+├─ feature/backend/<issue>-<name>
+├─ feature/infra/<issue>-<name>
+├─ feature/fullstack/<issue>-<name>
+├─ fix/<area>/<issue>-<name>
+├─ docs/<issue>-<name>
+└─ chore/<issue>-<name>
 ```
 
 예를 들어 12번 Issue의 프론트엔드 작업 브랜치는 `feature/frontend/12-status-card`처럼 만듭니다.
@@ -20,13 +20,19 @@ main
 ## 작업 순서
 
 1. 작업을 시작하기 전에 GitHub Issue를 만듭니다.
-2. 최신 `develop`에서 Issue 하나당 브랜치 하나를 만듭니다.
+2. 최신 `main`에서 Issue 하나당 브랜치 하나를 만듭니다.
 3. 한 PR에는 한 가지 목적의 변경만 담습니다.
 4. 변경한 영역의 테스트를 로컬에서 실행합니다.
-5. 작업 브랜치에서 `develop`을 대상으로 PR을 만듭니다.
+5. 작업 브랜치에서 `main`을 대상으로 PR을 만듭니다.
 6. 최소 1명의 리뷰를 받고 가능하면 Squash merge합니다.
 
-`main`과 `develop`에는 직접 push하지 않습니다. 저장소 설정에서 두 브랜치에 보호 규칙을 적용하는 것을 권장합니다.
+`main`에는 직접 push하지 않습니다. 저장소 설정에서 `main`에 보호 규칙을 적용하는 것을 권장합니다.
+
+## 역할을 넘나드는 작업
+
+누구나 프론트·백엔드를 함께 수정할 수 있습니다. Issue에 수정할 경로와 담당자를 적고, 같은 파일을 수정하는 열린 PR이 있으면 병합 순서를 먼저 정합니다. 초기 프론트·백엔드 구축은 각각 한 명이 구조와 컨벤션을 정리한 뒤 인수인계합니다.
+
+공통 설정을 바꾸려면 Issue에서 필요성과 영향을 합의하고 PR의 공통 설정 변경 항목을 체크합니다. 자동 검사는 변경을 알리고 누락을 잡는 장치이며 실제 리뷰 승인은 별도로 필요합니다. 전체 절차와 초기 구축 완료 조건, 자동 검사, main 보호 설정은 [docs/collaboration.md](docs/collaboration.md)를 따릅니다.
 
 ## 변경 전 확인
 
