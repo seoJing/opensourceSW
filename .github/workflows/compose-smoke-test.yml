@@ -2,34 +2,22 @@ name: Compose Smoke Test
 
 on:
   push:
-    branches: [main, develop]
-    paths:
-      - 'frontend/**'
-      - 'backend/**'
-      - 'database/**'
-      - 'docker-compose.yml'
-      - '.env.example'
-      - '.github/workflows/compose-smoke-test.yml'
+    branches: [main]
   pull_request:
-    branches: [main, develop]
-    paths:
-      - 'frontend/**'
-      - 'backend/**'
-      - 'database/**'
-      - 'docker-compose.yml'
-      - '.env.example'
-      - '.github/workflows/compose-smoke-test.yml'
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   smoke-test:
+    name: Compose Smoke Test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
-      - name: Prepare local environment
-        run: cp .env.example .env
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
       - name: Start services
         run: docker compose up --build -d
       - name: Wait for healthy services
@@ -72,7 +60,7 @@ jobs:
           set -euo pipefail
           response=$(curl --fail --silent --show-error --retry 5 --retry-all-errors http://localhost:3000/api/health)
           echo "$response"
-          grep -q '"status":"UP"' <<< "$response"
+          printf '%s' "$response" | python3 -c 'import json, sys; health = json.load(sys.stdin); assert health["status"] == "UP"; assert health["components"]["db"]["status"] == "UP"'
       - name: Show diagnostics on failure
         if: failure()
         run: |

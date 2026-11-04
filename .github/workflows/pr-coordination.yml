@@ -1,0 +1,27 @@
+name: PR Coordination
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  coordination:
+    name: PR Coordination
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # 신뢰된 기준 브랜치만 checkout합니다. PR head의 코드는 실행하지 않습니다.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const { default: coordinate } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/pr-coordination.mjs`);
+            await coordinate({ github, context, core });

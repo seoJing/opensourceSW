@@ -52,17 +52,30 @@ Docker Compose는 `frontend`, `backend`, `db` 세 서비스만 기본 실행하�
 11. `node_modules`, `target`, `dist`, coverage, 로그, 캐시와 기타 생성 파일을 커밋하지 않습니다. 단, 재현 가능한 설치를 위한 `package-lock.json`과 Maven Wrapper 파일은 커밋합니다.
 12. 작은 PR 단위로 변경하고 PR 하나에 한 가지 목적만 둡니다.
 
+## 공동 작업과 초기 구축
+
+- 프론트·백은 고정 소유 영역이 아닙니다. Issue에 담당자와 실제 수정할 경로를 적고 양쪽을 함께 작업할 수 있습니다.
+- 초기 프론트 구축과 초기 백엔드 구축은 각각 담당자 한 명이 구조·컨벤션·테스트를 정리하고 영역별 README에 인수인계합니다. 이에 의존하는 기능은 초기 구축 PR 병합 후 최신 `main`에서 시작합니다.
+- 작업 전에 [docs/collaboration.md](docs/collaboration.md)와 관련 영역 README를 읽고, 열린 PR의 변경 경로가 겹치는지 확인합니다.
+- 기능 작업에서 공통 구조·컨벤션·의존성·Docker 실행 설정을 임의로 변경하지 않습니다. 필요하면 Issue에서 변경 이유·영향·검증 방법을 합의하고 PR에 표시합니다.
+- 자동 감지 기준은 `.github/harness-policy.json`입니다. 초기 구축으로 공통 진입점이나 설정 파일이 바뀌면 목록도 갱신합니다. 목록에 없다는 이유로 합의 없이 공통 구조를 변경하지 않습니다.
+- 공통 파일을 수정한 PR에는 합의 Issue와 `- [x] 공통 설정 변경을 Issue에서 합의했습니다.`를 포함합니다. 이 표시는 실제 리뷰 승인을 대신하지 않습니다.
+- 다른 작업자의 변경을 되돌리지 않습니다. 같은 파일을 수정하는 PR이 있으면 담당자끼리 병합 순서를 합의하고 최신 `main`을 반영합니다.
+- 로컬 시연 범위를 넘어서는 외부 배포나 배포 구성을 임의로 추가하지 않습니다.
+
 ## Git과 PR
 
-- `main`, `develop`에 직접 push하지 않습니다.
+- `main`에 직접 push하지 않습니다.
 - 작업 전에 Issue를 만들고 Issue 하나당 브랜치 하나를 사용합니다.
-- 작업 브랜치에서 `develop`으로 PR을 만들고 최소 1명의 리뷰를 받습니다.
+- 최신 `main`에서 작업 브랜치를 만들고 `main`으로 PR을 올려 최소 1명의 리뷰를 받습니다.
 - 가능하면 Squash merge합니다.
 - 자세한 브랜치 이름과 절차는 `CONTRIBUTING.md`를 따릅니다.
 
 ## 완료 전 검증과 보고
 
 관련 영역의 lint, 테스트, 빌드를 실행합니다. 통합 환경에 영향을 주면 `docker compose config`, 이미지 빌드, 세 서비스 health, 프론트엔드와 `/api/health` 응답까지 확인합니다.
+
+하네스를 변경하면 `node --test scripts/repo-harness.test.mjs`와 `node scripts/repo-harness.mjs`를 실행합니다. Node.js가 없는 환경에서는 CI 결과를 확인하고 로컬 미검증 사유를 보고합니다.
 
 작업 결과에는 다음을 보고합니다.
 

@@ -2,22 +2,18 @@ name: Frontend Test
 
 on:
   push:
-    branches: [main, develop]
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend-test.yml'
+    branches: [main]
   pull_request:
-    branches: [main, develop]
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend-test.yml'
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   test:
+    name: Frontend Test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: frontend
@@ -32,3 +28,5 @@ jobs:
         run: npm ci
       - name: Run Vitest
         run: npm run test
+      - name: Build frontend
+        run: npm run build
