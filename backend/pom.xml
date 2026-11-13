@@ -22,31 +22,62 @@
     </properties>
 
     <dependencies>
+
+        <!-- HTTP API, Spring MVC, 내장 웹 서버와 JSON 변환을 제공 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- 애플리케이션과 데이터베이스 상태를 /actuator/health로 확인 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <!-- 세션 인증, 비밀번호 검증, 접근 제어와 CSRF 방어를 제공 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- 로그인 요청 DTO의 Bean Validation 제약을 검사 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- DataSource와 JDBC 기반 DB 연결을 구성 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
+
+        <!-- 실행 시 PostgreSQL에 연결하는 JDBC 드라이버 -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- 테스트에서 PostgreSQL 대신 사용하는 인메모리 JDBC 드라이버 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- JUnit, Spring Test와 테스트용 검증 도구를 제공 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- MockMvc 요청에서 CSRF 토큰 등 Spring Security 테스트 도구를 제공 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
