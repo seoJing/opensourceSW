@@ -14,9 +14,15 @@ class AuthPropertiesTests {
     }
 
     @Test
-    void partialAccountFailsWithoutEchoingConfiguredValues() {
+    void invalidBcryptFormatFailsWithoutEchoingConfiguredValues() {
         assertThatThrownBy(() -> new AuthProperties.Demo("user", "name", "login", "not-a-hash"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageNotContaining("not-a-hash");
+    }
+
+    @Test
+    void partialAccountFailsWithoutEchoingConfiguredValues() {
+        assertThatThrownBy(() -> new AuthProperties.Demo("user", "name", "test-login-id", ""))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageNotContaining("test-login-id");
     }
 
     @Test
