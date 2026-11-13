@@ -1,17 +1,57 @@
 spring:
+
   application:
     name: suwon-trip-backend
+
+  # 환경변수가 없으면 로컬 개발용 PostgreSQL 설정을 사용
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/suwon_trip}
     username: ${SPRING_DATASOURCE_USERNAME:suwon_app}
     password: ${SPRING_DATASOURCE_PASSWORD:local_dev_only_password}
 
+server:
+  servlet:
+    session:
+
+      # 마지막 요청 이후 세션이 유지되는 시간
+      timeout: ${SESSION_TIMEOUT:30m}
+
+      # 세션 ID를 URL에 노출하지 않고 쿠키로만 전달
+      tracking-modes: cookie
+      cookie:
+
+        # JavaScript의 세션 쿠키 접근을 막고 교차 사이트 전송을 제한
+        http-only: true
+        same-site: lax
+
+        # 로컬 HTTP 기본값. HTTPS에서는 true로 설정해야 함.
+        secure: ${SESSION_COOKIE_SECURE:false}
+
+app:
+  auth:
+
+    # 네 값이 모두 비어 있으면 시연 계정 로그인을 비활성화
+    demo:
+      user-id: ${DEMO_USER_ID:}
+      display-name: ${DEMO_DISPLAY_NAME:}
+      login-id: ${DEMO_LOGIN_ID:}
+      password-hash: ${DEMO_PASSWORD_HASH:}
+
+    # 단일 서버 메모리에서 클라이언트 IP별 로그인 횟수를 제한
+    max-login-attempts: ${AUTH_LOGIN_MAX_ATTEMPTS:5}
+    login-window: ${AUTH_LOGIN_WINDOW:60s}
+    max-tracked-clients: ${AUTH_LOGIN_MAX_TRACKED_CLIENTS:1000}
+
 management:
   endpoints:
     web:
       exposure:
+
+        # 관리 엔드포인트 중 health만 HTTP로 공개
         include: health
   endpoint:
     health:
+
+      # 구성 요소 이름은 보여 주되 상세 진단 값은 숨김
       show-components: always
       show-details: never
