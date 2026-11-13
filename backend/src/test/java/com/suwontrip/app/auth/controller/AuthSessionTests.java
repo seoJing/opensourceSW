@@ -157,6 +157,17 @@ class AuthSessionTests {
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {" {}", " true", " invalid"})
+    void trailingJsonContentIsRejectedBeforeAuthentication(String suffix) throws Exception {
+        Session session = anonymous();
+        mvc.perform(post(PATH).session(session.session()).header("X-CSRF-TOKEN", session.token())
+                        .contentType(MediaType.APPLICATION_JSON).content(validBody() + suffix))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+        mvc.perform(get(PATH).session(session.session()))
+                .andExpect(jsonPath("$.authenticated").value(false));
+    }
+
     @Test
     void passwordLengthUsesUtf8BytesInsteadOfCharacterCount() throws Exception {
         Session session = anonymous();
