@@ -25,6 +25,9 @@ public enum AuthErrorCode {
     // 같은 IP의 로그인 시도가 제한 횟수를 넘었다. 재시도 시간은 Retry-After 헤더로 보낸다.
     TOO_MANY_ATTEMPTS(HttpStatus.TOO_MANY_REQUESTS, "잠시 후 다시 로그인해 주세요."),
 
+    // 예상하지 못한 서버 오류는 내부 상세를 숨긴 공통 응답으로 반환한다.
+    INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요."),
+
     // 시연 계정이 없거나 로그인 제한기의 IP 저장 한도가 가득 찼다.
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "로그인 서비스를 사용할 수 없어요.");
 
