@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 
+import { getHealth } from '../api/getHealth'
+
 const checkingStatus = {
   className: 'checking',
   label: '확인 중',
   message: '백엔드 상태를 확인하고 있습니다.',
 }
 
-function App() {
+export default function StatusPage() {
   const [backendStatus, setBackendStatus] = useState(checkingStatus)
 
   useEffect(() => {
@@ -14,20 +16,12 @@ function App() {
 
     async function checkBackend() {
       try {
-        const response = await fetch('/api/health', {
-          headers: { Accept: 'application/json' },
-        })
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`)
-        }
-
-        const health = await response.json()
+        const status = await getHealth()
         if (isMounted) {
-          const isUp = health.status === 'UP'
+          const isUp = status === 'UP'
           setBackendStatus({
             className: isUp ? 'up' : 'down',
-            label: isUp ? '연결됨 (UP)' : `응답 상태: ${health.status ?? '알 수 없음'}`,
+            label: isUp ? '연결됨 (UP)' : `응답 상태: ${status ?? '알 수 없음'}`,
             message: isUp
               ? 'Spring Boot와 PostgreSQL 연결이 정상입니다.'
               : '백엔드 또는 데이터베이스 상태를 확인해 주세요.',
@@ -79,5 +73,3 @@ function App() {
     </main>
   )
 }
-
-export default App
