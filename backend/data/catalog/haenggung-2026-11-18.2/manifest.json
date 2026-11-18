@@ -1,0 +1,53 @@
+{
+  "dataVersion": "haenggung-2026-11-18.2",
+  "observedOn": "2026-11-18",
+  "discoveredPlaces": 321,
+  "attemptedPlaces": 321,
+  "statuses": {
+    "COLLECTED": 272,
+    "NO_STRUCTURED_MENU": 49
+  },
+  "cafes": 320,
+  "sourceMenus": 5020,
+  "loadedMenus": 5011,
+  "quarantinedMenus": 9,
+  "nullPrices": 227,
+  "optionMenus": 18,
+  "availability": {
+    "UNKNOWN": 4971,
+    "SEASON_ENDED": 40
+  },
+  "legalDongs": {
+    "팔달로3가": 19,
+    "북수동": 68,
+    "신풍동": 78,
+    "팔달로1가": 10,
+    "남창동": 20,
+    "남수동": 26,
+    "장안동": 63,
+    "영동": 11,
+    "중동": 4,
+    "팔달로2가": 14,
+    "매향동": 7,
+    "구천동": 1
+  },
+  "catalogSha256": "77101fe31346de40225d23adca5a485f74cb4861e98a9a8e9d1cf7474ab4eb0d",
+  "priorSixIdsPreserved": [
+    "menu-001",
+    "menu-002",
+    "menu-003",
+    "menu-004",
+    "menu-005",
+    "menu-006"
+  ],
+  "exhaustiveCensus": false,
+  "recommendationReady": false,
+  "policy": [
+    "법정동 주소와 카페 관련 업종으로 후보를 제한함",
+    "원문 메뉴 ID를 매장 ID와 함께 사용하며 공급자의 ID 안정성은 보장되지 않음",
+    "공급자의 값과 현재 판매 확인을 구분함",
+    "재료·알레르기·맛 점수는 추론하지 않음",
+    "원문 옵션은 검토 자료에 보존하며 합의된 Catalog 스키마에는 추가하지 않음",
+    "네이버 검색 전체 업소의 완전 수집을 보장하지 않음"
+  ]
+}
