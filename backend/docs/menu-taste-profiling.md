@@ -6,6 +6,15 @@
 
 모델은 PC의 Ollama에서 실행하고, Python 3.10 이상 표준 라이브러리만 사용하는 `backend/tools/taste-profiling/taste_batch.py`가 로컬 API를 호출합니다. 외부 유료 API·키·앱의 추가 컨테이너는 필요하지 않습니다. Ollama·Qwen3는 서버 앱 의존성이 아니라 자료 준비 도구입니다. 다른 PC는 생성 묶음을 전달받아 적재할 수 있으며 모델을 다시 설치할 필요가 없습니다.
 
+이번 로컬 검증에서 사용한 실행 파일은 `~/.local/share/opensourceSW/tools/ollama-v0.40.16/bin/ollama`, 모델 폴더는 `~/.local/share/opensourceSW/tools/ollama-models`입니다. PATH 등록·자동 시작은 하지 않았습니다. 같은 PC에서 다시 켤 때는 아래 명령을 사용합니다.
+
+```sh
+OLLAMA_HOST=127.0.0.1:11434 \
+OLLAMA_MODELS="$HOME/.local/share/opensourceSW/tools/ollama-models" \
+OLLAMA_NO_CLOUD=1 \
+"$HOME/.local/share/opensourceSW/tools/ollama-v0.40.16/bin/ollama" serve
+```
+
 공식 [Ollama 설치 안내](https://docs.ollama.com/linux), [Qwen3 8B](https://ollama.com/library/qwen3:8b), [JSON 스키마 출력](https://docs.ollama.com/capabilities/structured-outputs)을 참고합니다. 모델은 표본 추론의 메모리·시간·출력 품질을 확인한 뒤 사용합니다. Qwen3 8B Q4_K_M 다운로드는 약 5.2GB이며 실제 추론에는 추가 메모리가 필요합니다. 모델 digest로 실제 사용한 파일을 식별합니다.
 
 ## 맛 기준 taste-v1
