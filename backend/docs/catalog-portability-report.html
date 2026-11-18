@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>행궁동 카탈로그 DB 적재·실행 검증 보고서</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, "Malgun Gothic", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #202020; background: #f5f5f3; line-height: 1.65; }
+    main { max-width: 960px; margin: 0 auto; padding: 34px 22px 64px; }
+    h1 { margin: 0 0 8px; font-size: 2rem; line-height: 1.3; }
+    h2 { margin: 38px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #bbb; font-size: 1.35rem; }
+    p { margin: 9px 0; }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .meta { color: #555; }
+    .lead { margin-top: 18px; padding: 20px; background: white; border-left: 5px solid #333; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+    .card { padding: 16px; background: white; border: 1px solid #ddd; }
+    .card strong { display: block; font-size: 1.5rem; line-height: 1.2; }
+    .card span { color: #555; font-size: .9rem; }
+    .table-wrap { overflow-x: auto; background: white; border: 1px solid #ddd; }
+    table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid #ddd; text-align: left; vertical-align: top; }
+    th { background: #e9e9e7; font-weight: 700; }
+    tr:last-child td { border-bottom: 0; }
+    .tag { display: inline-block; padding: 1px 7px; border: 1px solid #777; border-radius: 3px; font-size: .8rem; white-space: nowrap; }
+    .ok { background: #eee; }
+    .pending { background: #f8f2df; }
+    .gap { background: #f3e9e7; }
+    code { font-family: ui-monospace, "Cascadia Code", monospace; font-size: .9em; overflow-wrap: anywhere; }
+    pre { overflow-x: auto; margin: 10px 0; padding: 15px; background: #252525; color: #f6f6f6; border-radius: 4px; }
+    ol, ul { padding-left: 23px; }
+    li + li { margin-top: 7px; }
+    .note { color: #555; font-size: .92rem; }
+    @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } main { padding: 24px 14px 45px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>행궁동 카탈로그 DB 적재·실행 검증 보고서</h1>
+    <p class="meta">2026-11-18 로컬 점검 · 데이터 버전 <code>haenggung-2026-11-18.2</code> · Issue #27</p>
+  </header>
+
+  <div class="lead">
+    <strong>카페 320곳 · 메뉴 5,011건을 PostgreSQL에 저장했어요</strong>
+    <p>JSON은 최초 적재·버전 교체에 쓰고, 조회는 DB에서 해요. 실제 자료 전체를 원본과 대조했고, JSON 연결을 제거한 뒤 DB·백엔드·프론트 컨테이너를 다시 만들어도 데이터가 유지되는 것을 확인했어요. 다른 PC에서는 자기 파일 경로로 최초 적재하면 돼요. 선행 PR 병합과 통합 검증은 남아 있어요.</p>
+  </div>
+
+  <div class="cards" aria-label="핵심 수치">
+    <div class="card"><strong>3개</strong><span>Compose 서비스: frontend · backend · db</span></div>
+    <div class="card"><strong>7개</strong><span>GitHub Actions 워크플로 파일</span></div>
+    <div class="card"><strong>5,011건</strong><span>실제 DB에 저장된 메뉴. 추천 확정 수와 다름</span></div>
+  </div>
+
+  <h2>Issue·PR 정리 판단</h2>
+  <p><strong>카탈로그 조회는 PostgreSQL, JSON은 적재 원본으로 유지해요.</strong> JSON 파싱·검증은 적재에 필요해요. 전체 Catalog를 메모리 Bean으로 유지하던 초안은 PR #31에서 교체했으므로 이를 별도로 유지하는 PR은 없어요.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Issue / PR</th><th>판단</th><th>남겨두는 역할</th></tr></thead>
+    <tbody>
+      <tr><td>#13</td><td>종료</td><td>초기 작동 테스트·인계 논의 기록. 실행할 기능 작업이 없어 not planned로 종료했어요.</td></tr>
+      <tr><td>#18 / #19</td><td>유지</td><td>로그인·세션 인증</td></tr>
+      <tr><td>#20 / #26</td><td>유지</td><td>설문 정의 조회. 현재 정적 JSON 설정이며 DB 구현이 아니에요. 답변·추천 이력 저장은 별도예요.</td></tr>
+      <tr><td>#21 / #25</td><td>유지</td><td>수집 출처·원자료 범위·입력 근거</td></tr>
+      <tr><td>#22 / #23</td><td>유지·역할 명확화</td><td>DB 적재 전 JSON 파싱·검증. 메모리 조회 저장소가 아니에요.</td></tr>
+      <tr><td>#24 / #31</td><td>유지</td><td>PostgreSQL 적재·조회·버전 전환</td></tr>
+      <tr><td>#27 / #28</td><td>유지</td><td>전달 묶음·해시·추천 후보 정책·검증 보고서</td></tr>
+      <tr><td>#29 / #30</td><td>유지·역할 명확화</td><td>최초 적재·버전 교체용 Docker 파일 연결. 적재 후 JSON 연결 없이 실행 가능해요.</td></tr>
+    </tbody>
+  </table></div>
+  <p>기능 병합 순서: <strong>#23 → #31 → #30</strong>. 문서 PR은 별도로 검토할 수 있어요. 이미 열린 PR을 합쳐 다시 만들면 여러 Issue의 목적·검증·리뷰가 섞이므로 현재 분리를 유지해요. 코드 삭제나 브랜치 재작성 없이 제목·설명·문서의 역할을 정리했어요.</p>
+
+  <h2>평가 항목별 확인</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>항목</th><th>지금 확인한 사실</th><th>판정과 남은 증거</th></tr></thead>
+    <tbody>
+      <tr><td>Git 브랜치·PR</td><td>Issue별 브랜치에서 <a href="https://github.com/seoJing/opensourceSW/pull/19">#19 인증</a>, <a href="https://github.com/seoJing/opensourceSW/pull/23">#23 카탈로그</a>, <a href="https://github.com/seoJing/opensourceSW/pull/25">#25 출처 문서</a>, <a href="https://github.com/seoJing/opensourceSW/pull/26">#26 설문</a>, <a href="https://github.com/seoJing/opensourceSW/pull/28">#28 전달 기준</a>, <a href="https://github.com/seoJing/opensourceSW/pull/30">#30 Compose 연결</a>을 <code>main</code> 대상으로 올렸어요. DB 적재·조회는 <a href="https://github.com/seoJing/opensourceSW/pull/31">Draft PR #31</a>로 올렸어요. 선행 #23 병합 후 최신 main 재검증이 필요해요.</td><td><span class="tag pending">리뷰·병합 대기</span> 병합 이력과 최소 1명 리뷰가 최종 증거예요.</td></tr>
+      <tr><td>Docker·Kubernetes</td><td>Compose에 frontend, backend, db 세 서비스가 있어요. 프론트의 <code>/api/health</code>는 백엔드로, 백엔드는 PostgreSQL로 연결하고 <code>postgres_data</code> named volume이 있어요.</td><td><span class="tag ok">로컬 실행 확인</span> 세 서비스 healthy, 컨테이너 재생성 후 실제 카페·메뉴 보존을 확인했어요. Kubernetes 구성은 없어요.</td></tr>
+      <tr><td>추가 오픈소스</td><td>백엔드는 Spring Security·Jackson을 사용하고, #24는 DB 변경 이력 관리에 Flyway를 추가했어요. 프론트 런타임에는 Nginx가 있어요.</td><td><span class="tag pending">수업 목록 대조 필요</span> 수업에서 배운 오픈소스 목록을 확인해야 평가 인정 여부를 말할 수 있어요.</td></tr>
+      <tr><td>GitHub Actions</td><td>저장소에 Frontend Lint/Test, Backend Test, Docker Build, Compose Smoke Test, Repository Checks, PR Coordination의 7개 워크플로가 있어요.</td><td><span class="tag ok">검사 7개 통과</span> DB 구현 <a href="https://github.com/seoJing/opensourceSW/pull/31/checks">PR #31</a>의 <code>6598cae</code>에서 7개 모두 통과했어요. 기본 CI는 실제 외부 데이터 적재와 PostgreSQL 전용 테스트까지 실행하지 않아요. 각 PR의 Actions 기록이 증거예요.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>지금 실행하면 데이터는 어디로 가나요?</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>경로</th><th>현재 동작</th></tr></thead>
+    <tbody>
+      <tr><td><code>catalog.json → CatalogLoader → CatalogImporter</code></td><td>원본 전체를 검증한 뒤 한 트랜잭션으로 DB에 적재해요. Catalog는 적재 중에만 사용하며 전체 데이터를 Bean으로 보관하지 않아요.</td></tr>
+      <tr><td><code>PostgreSQL → CatalogRepository</code></td><td><span class="tag ok">구현·검증</span> 카페·메뉴 ID 조회, 카페별 메뉴 페이지 조회를 SQL로 수행해요. 현재 활성 버전만 조회해요.</td></tr>
+      <tr><td><code>Docker Compose → catalog.json</code></td><td><span class="tag pending">Draft PR #30</span> 읽기 전용 연결을 통해 실제 적재까지 확인했어요. 파일 연결은 첫 적재·새 버전 적용 때 필요하며, PR은 아직 미병합이에요.</td></tr>
+      <tr><td><code>frontend → /api/v1</code></td><td><span class="tag gap">미구현</span> Nginx는 현재 <code>/api/health</code>만 백엔드로 연결해요. 기능 API 경유는 별도 프록시 설정과 브라우저 검증이 필요해요.</td></tr>
+      <tr><td><code>postgres_data</code></td><td>실제 이름은 <code>suwon_trip_postgres_data</code>예요. 카페·메뉴·버전·출처가 담긴 DB 파일을 보존해요. JSON 적재는 앱의 Importer가 담당해요.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>팀 전달 파일 검증 결과</h2>
+  <p>기존 선택형 압축 묶음은 <code>catalog.json</code>, <code>manifest.json</code>, <code>SHA256SUMS</code>로 구성했어요. 압축 크기는 약 364KB예요. 압축을 다른 로컬 폴더에 풀어 두 파일의 해시와 manifest의 버전·수량을 검사했어요.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>검사</th><th>실제 결과</th></tr></thead>
+    <tbody>
+      <tr><td><code>sha256sum -c SHA256SUMS</code></td><td><span class="tag ok">통과</span> catalog·manifest 모두 일치</td></tr>
+      <tr><td>manifest 대조</td><td><span class="tag ok">통과</span> 버전 <code>haenggung-2026-11-18.2</code>, 카페 320곳, 메뉴 5,011건, catalog SHA-256 일치</td></tr>
+      <tr><td>Java 로더</td><td><span class="tag ok">통과</span> 추출된 파일에서 카페 320곳·메뉴 5,011건 로딩</td></tr>
+      <tr><td>다른 경로의 Compose 설정</td><td><span class="tag ok">통과</span> 일반 경로와 공백·한글이 있는 경로의 읽기 전용 연결, 필수 변수 누락 오류를 확인했어요. 컨테이너 경로는 <code>/app/data/catalog.json</code>으로 같아요.</td></tr>
+      <tr><td>실제 카탈로그 Docker 기동</td><td><span class="tag ok">통과</span> PostgreSQL 18.6에 실제 자료를 적재하고 전체 필드와 해시를 대조했어요. JSON 없는 구성으로 컨테이너를 재생성한 뒤에도 같은 자료가 남았어요. 다른 PC에서 직접 실행한 결과는 아니에요.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">로컬 묶음: <code>~/.local/share/opensourceSW/catalog/handoff/haenggung-2026-11-18.2.tar.gz</code>. 초기에는 별도 전달했지만, 현재 PR #30에 JSON·manifest·해시를 포함했어요. 병합 후 저장소만 받아 같은 자료를 적재할 수 있어요. 전달 절차는 <a href="catalog-delivery-and-candidates.md">#27 문서</a>를 보세요.</p>
+
+  <h2>DB에는 무엇이 들어갔나요?</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>테이블</th><th>내용</th><th>현재 활성 버전</th></tr></thead>
+    <tbody>
+      <tr><td><code>catalog_dataset</code></td><td>데이터 버전·SHA-256·적재 시각·건수</td><td>1개 버전</td></tr>
+      <tr><td><code>catalog_cafe</code></td><td>카페 이름·주소·좌표·출처·조회일</td><td>320곳</td></tr>
+      <tr><td><code>catalog_menu</code></td><td>메뉴·가격·설명·판매 상태·출처·카페 연결</td><td>5,011건</td></tr>
+      <tr><td><code>catalog_active</code></td><td>현재 조회할 버전, 동시 적재 잠금</td><td><code>haenggung-2026-11-18.2</code></td></tr>
+      <tr><td><code>flyway_schema_history</code></td><td>DB 스키마 적용 이력</td><td>V1 적용 성공</td></tr>
+    </tbody>
+  </table></div>
+  <p>같은 버전·같은 파일은 중복 저장하지 않아요. 같은 버전의 다른 파일은 거부해요. 새 버전은 전체 저장 성공 후에만 활성화하고, 실패하면 전체 롤백해요. 이전 버전은 보존하며 이전 원본을 다시 지정해 되돌릴 수 있어요.</p>
+  <p class="note">위치·상호는 네이버 API HUB 지역 검색, 메뉴 원자료는 네이버 지도 메뉴 페이지가 받은 구조화 데이터예요. 메뉴 수집 경로는 공식 지역 검색 API와 구분해요. DB 저장은 새로운 수집이나 판매 확인을 뜻하지 않아요.</p>
+
+  <h2>검증 결과</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>검증</th><th>결과</th></tr></thead>
+    <tbody>
+      <tr><td>기본 Maven 테스트</td><td>110개 통과 / 실패·오류·건너뜀 0개</td></tr>
+      <tr><td>실제 PostgreSQL 통합 테스트</td><td>14개 통과 / 실패·오류·건너뜀 0개</td></tr>
+      <tr><td>검증하는 동작</td><td>필드 보존, DB 직접 조회, 중복 방지, 버전 충돌, 버전 전환·되돌리기, SQL 실패 롤백, 동시 적재, 페이지 경계</td></tr>
+      <tr><td>실제 자료 대조</td><td>320곳·5,011건 전체 필드·메뉴 순서·원본 해시 일치. 가격 NULL 227건 보존</td></tr>
+      <tr><td>볼륨 보존</td><td>DB 컨테이너 ID 변경, 같은 named volume 사용. 적재 시각까지 동일하고 전체 행 유지</td></tr>
+      <tr><td>원본 없는 기동</td><td>백엔드 JSON 마운트 0개, 적재 환경변수 없음. 세 서비스 healthy</td></tr>
+      <tr><td>컨테이너 간 통신</td><td>프론트 HTML·프론트 경유 /api/health·백엔드 health 성공</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">일반 테스트와 PostgreSQL 테스트는 일부 같은 계약을 서로 다른 DB에서 확인해요. 합계 124회 실행을 124개의 서로 다른 요구사항으로 해석하지 않아요. 이 브랜치에는 인증·설문 PR의 미병합 코드가 포함되지 않아요.</p>
+
+  <h2>이번에 변경한 파일</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>backend/ 아래 경로</th><th>역할</th></tr></thead>
+    <tbody>
+      <tr><td><code>pom.xml</code></td><td>Flyway 11.20.3과 PostgreSQL 모듈, 실제 DB 테스트 프로필 추가</td></tr>
+      <tr><td><a href="https://github.com/mascot-vicky/opensourceSW/blob/6598cae/backend/src/main/resources/db/migration/V1__create_catalog.sql"><code>src/main/resources/db/migration/V1__create_catalog.sql</code></a></td><td>테이블·외래키·제약·인덱스 생성</td></tr>
+      <tr><td><code>catalog/persistence/CatalogImporter.java</code></td><td>검증·해시 비교·트랜잭션 적재·활성 버전 전환</td></tr>
+      <tr><td><code>catalog/persistence/CatalogRepository.java</code></td><td>DB 조회와 메뉴 페이지 처리</td></tr>
+      <tr><td><code>catalog/config/CatalogConfiguration.java</code>, <code>catalog/CatalogLoader.java</code></td><td>시작 적재 연결, 검증과 해시 계산에 동일 바이트 사용</td></tr>
+      <tr><td><code>src/test/java/.../catalog/config/</code>, <code>catalog/persistence/</code></td><td>시작 동작, H2·PostgreSQL 공통 계약 검증</td></tr>
+      <tr><td><code>docs/catalog-database.md</code>, <code>docs/catalog-input-format.md</code></td><td>DB 구조·실행·검증·버전 관리 안내</td></tr>
+    </tbody>
+  </table></div>
+  <p>소스 작업 폴더: <code>/tmp/opensourceSW-issue24-20261118</code><br>브랜치: <code>feature/backend/24-catalog-startup</code> · 구현 커밋: <code>6598cae</code> · <a href="https://github.com/seoJing/opensourceSW/pull/31">PR #31</a>. 원래 프로젝트 폴더의 미커밋 작업과 참조 DOCX는 건드리지 않았어요. #27 보고서와 #29 Docker 안내도 DB 저장 방식으로 갱신했어요.</p>
+
+  <h2>내 PC에서 DB 확인하기</h2>
+  <p>현재 실행한 Compose 프로젝트는 <code>opensourcesw</code>예요. 아래 명령은 WSL 터미널에서 실행해요.</p>
+  <pre><code>cd /tmp/opensourceSW-issue24-20261118
+
+docker compose -p opensourcesw exec -T db psql -U suwon_app -d suwon_trip \
+  -c "SELECT data_version, cafe_count, menu_count FROM catalog_dataset JOIN catalog_active USING (data_version);"
+
+docker compose -p opensourcesw exec -T db psql -U suwon_app -d suwon_trip \
+  -c "SELECT cafe_id, name, price_krw, availability FROM catalog_menu JOIN catalog_active USING (data_version) ORDER BY ordinal LIMIT 20;"</code></pre>
+  <p>DB 볼륨을 삭제하지 않으면 앱·컨테이너가 종료돼도 자료가 남아요. 다른 PC에는 별도 볼륨이 만들어지므로 데이터 묶음으로 최초 적재해야 해요.</p>
+
+  <h2>MVP 취향 속성 재정리</h2>
+  <p>전체 속성 후보를 먼저 살펴보고 이번 시연에 필요한 최소 항목만 선택해요. 맛 3축 고정과 로컬 모델 실험은 철회했고 모델·생성 결과·전용 코드 브랜치·실험 테이블을 제거했어요. 기존 카페·메뉴와 V1 DB는 유지해요. 새 속성과 질문은 아직 확정하지 않았어요.</p>
+
+  <h2>추천용 메뉴 기준</h2>
+  <p>5,011건 중 40건은 시즌 종료, 4,971건은 판매 여부 미확인이에요. 판매 확정 메뉴는 현재 0건이에요. 메뉴 227건의 가격과 2,275건의 설명이 비어 있어요.</p>
+  <ol>
+    <li>시연 자료, 판매 불가·시즌 종료 메뉴와 안내·선물·주류 같은 비추천 항목을 제외해요.</li>
+    <li>나머지는 검토 대상으로 두고, 음료·디저트·베이커리 분류와 근거를 기록해요. 분류가 불명확하면 추천하지 않아요.</li>
+    <li>가격·맛·식감·옵션 등 후보의 데이터 확보 여부를 확인하고 MVP에 넣을 항목만 선택해요. 미확인 값을 임의의 점수로 채우지 않아요.</li>
+    <li>판매 여부가 <code>UNKNOWN</code>인 메뉴를 시연 추천에 쓰면 화면에서 확인 필요 상태를 표시해요.</li>
+  </ol>
+
+  <h2>다른 사용자가 실행할 때</h2>
+  <ol>
+    <li>DB 실행에는 #23 → #31, 파일 연결에는 #30의 코드가 필요해요. 인증 #19·설문 #26까지 합치는 전체 서비스 통합은 별도로 재검증해요.</li>
+    <li>버전 묶음을 원하는 경로에 풀고 압축 파일 해시, 파일별 해시와 manifest를 확인해요.</li>
+    <li>Docker와 Compose를 준비해요. PR #30은 저장소 안의 고정 입력을 기본으로 읽으며, 다른 버전만 <code>CATALOG_FILE</code>로 지정해요. <a href="https://github.com/seoJing/opensourceSW/pull/30">PR #30 실행 안내</a>에 Windows·WSL·Linux·macOS 절차가 있어요.</li>
+    <li>확장 Compose로 실행해 세 서비스 health와 카탈로그 적재 로그·실제 DB 행 수를 확인해요. 파일 경로를 바꾸면 백엔드를 다시 생성해야 새 연결이 반영돼요.</li>
+  </ol>
+  <p class="note">이 보고서는 2026-11-18의 검증 스냅샷이에요. 실행 설정·안내 준비와 실제 환경의 동작 검증을 구분해 기록했어요. DB 적재·조회는 #24에서 검증했어요. 프론트 기능 API 프록시, 메뉴 HTTP API와 추천 점수 계산은 후속 작업이에요.</p>
+</main>
+</body>
+</html>
