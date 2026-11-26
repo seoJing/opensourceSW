@@ -1,0 +1,16 @@
+services:
+  backend:
+    environment:
+      APP_CATALOG_ENABLED: "true"
+      APP_CATALOG_PATH: /app/data/catalog.json
+    volumes:
+      - type: bind
+        source: ${CATALOG_FILE:-./backend/data/catalog/haenggung-2026-11-18.2/catalog.json}
+        target: /app/data/catalog.json
+        read_only: true
+        bind:
+          create_host_path: false
+
+volumes:
+  postgres_data:
+    name: ${SUWON_DB_VOLUME:-suwon_trip_postgres_data}
