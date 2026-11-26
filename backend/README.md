@@ -18,6 +18,9 @@ Docker Compose 실행 시 health에 PostgreSQL 연결 상태를 포함한다.
 - H2 (자동 테스트 환경)
 - JUnit 5 / Spring Boot Test / MockMvc
 
+설문 정의 조회의 입력 형식과 활성화 방법은
+[설문 정의 안내](docs/questionnaire-definition.md)를 참고한다.
+
 ### 패키지 구성 원칙
 
 기본 패키지는 `com.suwontrip.app`을 사용한다.

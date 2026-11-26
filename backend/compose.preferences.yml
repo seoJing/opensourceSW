@@ -1,0 +1,20 @@
+services:
+  backend:
+    environment:
+      APP_QUESTIONNAIRE_ENABLED: "true"
+      APP_QUESTIONNAIRE_PATH: /app/data/questionnaire.json
+      DEMO_USER_ID: fe-demo
+      DEMO_DISPLAY_NAME: 시연 사용자
+      DEMO_LOGIN_ID: fe-demo
+      DEMO_PASSWORD_HASH: ${DEMO_PASSWORD_HASH:?Set the demo account BCrypt hash before starting}
+    volumes:
+      - type: bind
+        source: ./backend/docs/examples/questionnaire-v0.1.0.json
+        target: /app/data/questionnaire.json
+        read_only: true
+        bind:
+          create_host_path: false
+
+volumes:
+  postgres_data:
+    name: ${SUWON_DB_VOLUME:-${COMPOSE_PROJECT_NAME}_preferences_data}

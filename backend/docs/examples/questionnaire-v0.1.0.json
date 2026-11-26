@@ -1,0 +1,143 @@
+{
+  "version": "v0.1.0",
+  "questions": [
+    {
+      "id": "Q1",
+      "label": "지금 무엇을 먹거나 마시고 싶으신가요?",
+      "type": "single",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "options": [
+        {
+          "id": "A",
+          "label": "음료"
+        },
+        {
+          "id": "B",
+          "label": "디저트"
+        },
+        {
+          "id": "C",
+          "label": "식사·브런치"
+        },
+        {
+          "id": "D",
+          "label": "상관없음"
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "label": "어느 정도의 가격대를 선호하시나요?",
+      "type": "single",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "options": [
+        {
+          "id": "A",
+          "label": "5,000원 미만"
+        },
+        {
+          "id": "B",
+          "label": "5,000원 이상 8,000원 미만"
+        },
+        {
+          "id": "C",
+          "label": "8,000원 이상"
+        },
+        {
+          "id": "D",
+          "label": "상관없음"
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "label": "어느 정도의 단맛을 선호하시나요?",
+      "type": "single",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "options": [
+        {
+          "id": "A",
+          "label": "달지 않은 메뉴"
+        },
+        {
+          "id": "B",
+          "label": "적당히 달콤한 메뉴"
+        },
+        {
+          "id": "C",
+          "label": "달콤한 메뉴"
+        },
+        {
+          "id": "D",
+          "label": "상관없음"
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "label": "어떤 종류의 음료를 선호하시나요?",
+      "type": "single",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "options": [
+        {
+          "id": "A",
+          "label": "커피 기반 음료"
+        },
+        {
+          "id": "B",
+          "label": "커피가 아닌 음료"
+        },
+        {
+          "id": "C",
+          "label": "상관없음"
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "label": "어떤 온도의 메뉴를 선호하시나요?",
+      "type": "single",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "options": [
+        {
+          "id": "A",
+          "label": "따뜻한 메뉴"
+        },
+        {
+          "id": "B",
+          "label": "차가운 메뉴"
+        },
+        {
+          "id": "C",
+          "label": "상관없음"
+        }
+      ]
+    },
+    {
+      "id": "Q6",
+      "label": "시그니처 메뉴를 선호하시나요?",
+      "type": "single",
+      "minSelections": 0,
+      "maxSelections": 1,
+      "options": [
+        {
+          "id": "A",
+          "label": "시그니처 메뉴"
+        },
+        {
+          "id": "B",
+          "label": "일반 메뉴"
+        },
+        {
+          "id": "C",
+          "label": "상관없음"
+        }
+      ]
+    }
+  ]
+}

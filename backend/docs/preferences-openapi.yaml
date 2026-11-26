@@ -1,0 +1,678 @@
+openapi: 3.0.3
+info:
+  title: 로그인·설문·메뉴 추천
+  version: 0.2.0
+  description: 브라우저는 같은 출처의 /api/v1 경로를 사용합니다. v0.1.0 예시 설문은 연동 검토용입니다.
+security:
+- sessionCookie: []
+paths:
+  /api/v1/auth/session:
+    get:
+      operationId: getSession
+      summary: 세션 상태 및 CSRF 토큰 조회
+      security: []
+      responses:
+        '200':
+          description: 현재 인증 상태와 이 세션의 CSRF 토큰
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+    post:
+      operationId: login
+      summary: 시연 계정 로그인
+      description: 먼저 GET으로 받은 쿠키와 CSRF 토큰을 사용합니다. 성공 시 응답의 새 CSRF 토큰으로 교체합니다.
+      security: []
+      parameters:
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: 현재 인증 상태와 이 세션의 CSRF 토큰
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          description: INVALID_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: INVALID_CREDENTIALS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: CSRF_INVALID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: TOO_MANY_ATTEMPTS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                minimum: 1
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: SERVICE_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: logout
+      summary: 로그아웃 및 비로그인 세션 준비
+      parameters:
+      - $ref: '#/components/parameters/CsrfToken'
+      responses:
+        '200':
+          description: 현재 인증 상태와 이 세션의 CSRF 토큰
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          description: AUTHENTICATION_REQUIRED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: CSRF_INVALID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/preference-questionnaire:
+    get:
+      operationId: getPreferenceQuestionnaire
+      summary: 활성 문항을 표시 순서로 조회
+      responses:
+        '200':
+          description: 설문 버전과 문항 목록
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Questionnaire'
+              examples:
+                handoff:
+                  summary: 연동 검토용 6문항 v0.1.0
+                  externalValue: examples/questionnaire-v0.1.0.json
+        '401':
+          description: AUTHENTICATION_REQUIRED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/me/preferences:
+    get:
+      summary: 내 마지막 설문 답변 조회
+      operationId: getPreferences
+      description: 저장된 버전이 현재 설문과 달라도 당시 답변을 그대로 반환합니다. 두 버전이 다르면 재설문을 안내합니다.
+      responses:
+        '200':
+          description: 미저장 또는 마지막 저장 결과
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preferences'
+              examples:
+                empty:
+                  value:
+                    saved: false
+                    questionnaireVersion: null
+                    answers: []
+                    updatedAt: null
+                saved:
+                  value:
+                    saved: true
+                    questionnaireVersion: v0.1.0
+                    answers:
+                    - questionId: Q1
+                      optionIds:
+                      - B
+                    - questionId: Q2
+                      optionIds:
+                      - B
+                    - questionId: Q3
+                      optionIds:
+                      - C
+                    - questionId: Q4
+                      optionIds: []
+                    - questionId: Q5
+                      optionIds:
+                      - B
+                    - questionId: Q6
+                      optionIds:
+                      - C
+                    updatedAt: '2026-11-26T04:30:00Z'
+        '401':
+          description: 로그인이 필요해요.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                example:
+                  value:
+                    code: AUTHENTICATION_REQUIRED
+                    message: 로그인이 필요해요.
+                    errors: []
+    put:
+      summary: 내 설문 답변 전체 교체
+      operationId: replacePreferences
+      description: 버전마다 정의된 모든 문항을 한 번씩 보냅니다. v0.1.0에서 Q1이 A가 아니면 Q4는 빈 배열입니다. 422
+        응답에서는 기존 답변이 유지됩니다.
+      parameters:
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Submission'
+            example:
+              questionnaireVersion: v0.1.0
+              answers:
+              - questionId: Q1
+                optionIds:
+                - B
+              - questionId: Q2
+                optionIds:
+                - B
+              - questionId: Q3
+                optionIds:
+                - C
+              - questionId: Q4
+                optionIds: []
+              - questionId: Q5
+                optionIds:
+                - B
+              - questionId: Q6
+                optionIds:
+                - C
+      responses:
+        '200':
+          description: 전체 저장 결과
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preferences'
+              examples:
+                saved:
+                  value:
+                    saved: true
+                    questionnaireVersion: v0.1.0
+                    answers:
+                    - questionId: Q1
+                      optionIds:
+                      - B
+                    - questionId: Q2
+                      optionIds:
+                      - B
+                    - questionId: Q3
+                      optionIds:
+                      - C
+                    - questionId: Q4
+                      optionIds: []
+                    - questionId: Q5
+                      optionIds:
+                      - B
+                    - questionId: Q6
+                      optionIds:
+                      - C
+                    updatedAt: '2026-11-26T04:30:00Z'
+        '400':
+          description: 요청 형식을 확인해 주세요.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                example:
+                  value:
+                    code: INVALID_REQUEST
+                    message: 요청 형식을 확인해 주세요.
+                    errors: []
+        '401':
+          description: 로그인이 필요해요.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                example:
+                  value:
+                    code: AUTHENTICATION_REQUIRED
+                    message: 로그인이 필요해요.
+                    errors: []
+        '403':
+          description: 요청 확인 값을 다시 받아주세요.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                example:
+                  value:
+                    code: CSRF_INVALID
+                    message: 요청 확인 값을 다시 받아주세요.
+                    errors: []
+        '409':
+          description: 현재 설문 버전을 확인해 주세요.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                example:
+                  value:
+                    code: QUESTIONNAIRE_VERSION_MISMATCH
+                    message: 현재 설문 버전을 확인해 주세요.
+                    errors: []
+        '422':
+          description: 설문 응답을 확인해 주세요.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                enum:
+                - no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                example:
+                  value:
+                    code: INVALID_ANSWERS
+                    message: 설문 응답을 확인해 주세요.
+                    errors:
+                    - field: answers[3].optionIds
+                      questionId: Q4
+                      reason: SELECTION_COUNT
+                      message: 음료를 고르지 않으면 Q4는 빈 배열로 보내 주세요.
+  /api/v1/menu-recommendations:
+    post:
+      operationId: recommendMenu
+      summary: 저장된 선호값에 맞는 메뉴 카드 한 장과 카페 정보 조회
+      parameters:
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [excludedMenuIds]
+              properties:
+                excludedMenuIds:
+                  type: array
+                  maxItems: 100
+                  uniqueItems: true
+                  items: {type: string, minLength: 1, pattern: '\S'}
+            example: {excludedMenuIds: []}
+      responses:
+        '200':
+          description: 활성 카탈로그의 모든 실제 메뉴를 판매 가능으로 간주하여 한 장을 반환합니다. 요청에서 제외한 뒤 후보가 없으면 menu는 null입니다.
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: [no-store]}
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [menu]
+                properties:
+                  menu:
+                    $ref: '#/components/schemas/MenuCard'
+              example: {menu: null}
+        '400':
+          description: INVALID_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: AUTHENTICATION_REQUIRED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: CSRF_INVALID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: PREFERENCES_REQUIRED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: SERVICE_UNAVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+  schemas:
+    MenuCard:
+      type: object
+      nullable: true
+      required: [id, cafeId, name, description, imageUrl, imageAlt, isDemo, cafe]
+      properties:
+        id: {type: string}
+        cafeId: {type: string}
+        name: {type: string}
+        description: {type: string}
+        imageUrl: {type: string, nullable: true}
+        imageAlt: {type: string}
+        isDemo: {type: boolean}
+        cafe:
+          type: object
+          required: [id, name, roadAddress, location, directionsUrl]
+          properties:
+            id: {type: string, description: 상위 cafeId와 같습니다.}
+            name: {type: string}
+            roadAddress: {type: string}
+            location:
+              type: object
+              nullable: true
+              required: [latitude, longitude]
+              properties:
+                latitude: {type: number, minimum: -90, maximum: 90}
+                longitude: {type: number, minimum: -180, maximum: 180}
+            directionsUrl: {type: string, format: uri, nullable: true}
+    Session:
+      type: object
+      required:
+      - authenticated
+      - user
+      - csrfToken
+      properties:
+        authenticated:
+          type: boolean
+        user:
+          type: object
+          required:
+          - id
+          - displayName
+          properties:
+            id:
+              type: string
+            displayName:
+              type: string
+          nullable: true
+        csrfToken:
+          type: string
+    Login:
+      type: object
+      required:
+      - loginId
+      - password
+      properties:
+        loginId:
+          type: string
+          minLength: 1
+          maxLength: 128
+        password:
+          type: string
+          format: password
+          minLength: 1
+          description: UTF-8 기준 최대 72바이트
+      additionalProperties: false
+    Questionnaire:
+      type: object
+      required:
+      - version
+      - questions
+      properties:
+        version:
+          type: string
+        questions:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Question'
+    Question:
+      type: object
+      required:
+      - id
+      - label
+      - type
+      - minSelections
+      - maxSelections
+      - options
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        type:
+          type: string
+          enum:
+          - single
+          - multiple
+        minSelections:
+          type: integer
+          minimum: 0
+        maxSelections:
+          type: integer
+          minimum: 0
+        options:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+            - id
+            - label
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+    Submission:
+      type: object
+      required:
+      - questionnaireVersion
+      - answers
+      properties:
+        questionnaireVersion:
+          type: string
+          minLength: 1
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+      additionalProperties: false
+    Preferences:
+      type: object
+      required:
+      - saved
+      - questionnaireVersion
+      - answers
+      - updatedAt
+      properties:
+        saved:
+          type: boolean
+        questionnaireVersion:
+          type: string
+          nullable: true
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    Answer:
+      type: object
+      required:
+      - questionId
+      - optionIds
+      properties:
+        questionId:
+          type: string
+          minLength: 1
+        optionIds:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          uniqueItems: true
+      additionalProperties: false
+    AnswerError:
+      type: object
+      required:
+      - field
+      - questionId
+      - reason
+      - message
+      properties:
+        field:
+          type: string
+          minLength: 1
+        questionId:
+          type: string
+          nullable: true
+        reason:
+          type: string
+          enum:
+          - MISSING_QUESTION
+          - UNKNOWN_QUESTION
+          - UNKNOWN_OPTION
+          - DUPLICATE_QUESTION
+          - DUPLICATE_OPTION
+          - SELECTION_COUNT
+        message:
+          type: string
+          minLength: 1
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      - errors
+      properties:
+        code:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnswerError'
+  parameters:
+    CsrfToken:
+      name: X-CSRF-TOKEN
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: 현재 로그인 세션의 CSRF 토큰

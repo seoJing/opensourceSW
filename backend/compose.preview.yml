@@ -1,0 +1,17 @@
+services:
+  frontend:
+    ports:
+      - "127.0.0.1:${API_PREVIEW_PORT:-18766}:18766"
+    volumes:
+      - type: bind
+        source: ./backend/docs/api-preview
+        target: /usr/share/nginx/api-preview
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./backend/docs/api-preview/nginx.conf
+        target: /etc/nginx/conf.d/api-preview.conf
+        read_only: true
+        bind:
+          create_host_path: false
