@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { demoMap, type DemoCafe } from '../mock'
+import { demoMap } from '../mock'
+import type { Cafe } from '../api/demoApi'
 import { Glyph } from './Icons'
 
 type Props = {
-  cafes: DemoCafe[]
+  cafes: Pick<Cafe, 'id' | 'name' | 'location'>[]
   activeCafeId: string | null
   exploring: boolean
   onSelect: (id: string) => void
   notify: (message: string) => void
 }
 
-function pinIcon(cafe: DemoCafe, active: boolean) {
+function pinIcon(cafe: Pick<Cafe, 'name'>, active: boolean) {
   const pin = document.createElement('div')
   pin.className = `cafe-pin${active ? ' is-active' : ''}`
   const label = document.createElement('span')
@@ -65,6 +66,7 @@ export function DemoMap({ cafes, activeCafeId, exploring, onSelect, notify }: Pr
     for (const marker of markerSet.values()) marker.remove()
     markerSet.clear()
     for (const cafe of cafes) {
+      if (!cafe.location) continue
       const marker = L.marker([cafe.location.latitude, cafe.location.longitude], {
         icon: pinIcon(cafe, false), title: `${cafe.name} 위치 보기`, keyboard: true,
       }).addTo(instance).on('click', () => onSelect(cafe.id))
@@ -87,7 +89,7 @@ export function DemoMap({ cafes, activeCafeId, exploring, onSelect, notify }: Pr
       marker?.getElement()?.setAttribute('aria-label', `${cafe.name} 위치 보기`)
     }
     const active = cafes.find(cafe => cafe.id === activeCafeId)
-    if (active) {
+    if (active?.location) {
       const point = instance.project([active.location.latitude, active.location.longitude])
       if (exploring) point.y += instance.getSize().y * 0.17
       instance.panTo(instance.unproject(point), { animate: !window.matchMedia('(prefers-reduced-motion: reduce)').matches, duration: 0.45 })
