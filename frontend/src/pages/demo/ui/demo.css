@@ -25,6 +25,7 @@
 .demo-brand.compact { font-size: var(--seed-font-size-t6); }
 .compact .brand-mark { width: 32px; height: 32px; }
 .entry-page { min-height: 100svh; display: flex; flex-direction: column; background: var(--demo-paper); overflow: hidden; }
+.entry-feedback { text-align: center; padding: var(--seed-dimension-x4); }
 .entry-header, .entry-footer { display: flex; align-items: center; justify-content: space-between; width: min(1160px, calc(100% - 96px)); margin-inline: auto; }
 .entry-header { height: 112px; flex-shrink: 0; }
 .neighborhood-label { color: var(--demo-muted); font-size: var(--seed-font-size-t2); letter-spacing: .18em; }

@@ -3,17 +3,18 @@ import { ActionButton, BottomSheetRoot, BottomSheetContent, BottomSheetBody, Bot
 import { mockMenus, type DemoCafe } from '../mock'
 import { directionsUrl, formatPrice } from '../model/demo'
 import { Glyph } from './Icons'
+import type { Cafe, Menu } from '../api/demoApi'
 
-export function CafeSheet({ cafe, selectedMenuId, open, onClose, onExited, notify }: {
-  cafe: DemoCafe | undefined
-  selectedMenuId: string | null
+export function CafeSheet({ cafe, menu, demoCafe, open, onClose, onExited, notify }: {
+  cafe: Cafe | undefined
+  menu: Menu | undefined
+  demoCafe?: DemoCafe
   open: boolean
   onExited: () => void
   onClose: () => void
   notify: (message: string) => void
 }) {
-  const menus = mockMenus.filter(menu => menu.cafeId === cafe?.id)
-  const selected = menus.find(menu => menu.id === selectedMenuId) ?? menus[0]
+  const menus = demoCafe ? mockMenus.filter(item => item.cafeId === demoCafe.id) : []
   async function copyAddress() {
     if (!cafe) return
     try {
@@ -22,22 +23,21 @@ export function CafeSheet({ cafe, selectedMenuId, open, onClose, onExited, notif
     } catch { notify('주소를 복사하지 못했어요. 주소를 길게 눌러 복사해주세요.') }
   }
   return <BottomSheetRoot open={open} onOpenChange={value => { if (!value) onClose() }} onAnimationEnd={value => { if (!value) onExited() }}>
-    {cafe && <BottomSheetContent className="cafe-sheet" title={cafe.name} description="행궁동 · 가상 시연 카페" showHandle>
+    {cafe && <BottomSheetContent className="cafe-sheet" title={cafe.name} description={demoCafe || menu?.isDemo ? '행궁동 · 시연 자료' : '행궁동 · 카페 정보'} showHandle>
       <BottomSheetBody className="cafe-sheet-body">
         <div className="sheet-address"><Glyph name="pin" size={19} /><span>{cafe.roadAddress}</span><button type="button" className="icon-button" aria-label="주소 복사" onClick={copyAddress}><Glyph name="copy" size={19} /></button></div>
-        {selected && <div className="sheet-featured">
-          <div className={`menu-art art-${selected.id}`}><img src={selected.imageUrl} alt={selected.imageAlt} /></div>
-          <div><Text as="h3" textStyle="t7Bold">{selected.name}</Text><p>{selected.description}</p><strong>{formatPrice(selected.priceKrw)}</strong><div className="taste-tags">{selected.demoTags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
+        {menu && <div className="sheet-featured">
+          <div className={`menu-art art-${menu.id}`}><img src={menu.imageUrl ?? '/illustrations/latte.svg'} alt={menu.imageAlt} /></div>
+          <div><Text as="h3" textStyle="t7Bold">{menu.name}</Text><p>{menu.description}</p></div>
         </div>}
-        <div className="sheet-menu-heading"><Text as="h3" textStyle="t6Bold">메뉴</Text><span>{menus.length}개</span></div>
-        <ul className="sheet-menu-list">{menus.map(menu => <li key={menu.id} className={menu.id === selected?.id ? 'selected-menu' : ''}>
-          <img src={menu.imageUrl} alt="" /><div><strong>{menu.name}</strong><span>{menu.availability === 'SEASON_ENDED' ? '시즌 종료' : '시연 메뉴 · 판매 여부 미확인'}</span></div><span>{formatPrice(menu.priceKrw)}</span>
-        </li>)}</ul>
-        <p className="sheet-demo-note">카페와 메뉴는 시연용 가상 자료예요. 지도 버튼은 표시된 시연 지점으로 연결돼요.</p>
+        <div className="sheet-menu-heading"><Text as="h3" textStyle="t6Bold">전체 메뉴</Text>{demoCafe && <span>{menus.length}개</span>}</div>
+        {demoCafe ? <ul className="sheet-menu-list">{menus.map(item => <li key={item.id} className={item.id === menu?.id ? 'selected-menu' : ''}>
+          <img src={item.imageUrl} alt="" /><div><strong>{item.name}</strong><span>{item.availability === 'SEASON_ENDED' ? '시즌 종료' : '시연 메뉴 · 판매 여부 미확인'}</span></div><span>{formatPrice(item.priceKrw)}</span>
+        </li>)}</ul> : <p className="sheet-demo-note">전체 메뉴는 아직 제공되지 않아요.</p>}
       </BottomSheetBody>
       <BottomSheetFooter className="cafe-sheet-footer">
-        <ActionButton asChild variant="neutralOutline"><a href={directionsUrl('naver', cafe)} target="_blank" rel="noopener noreferrer"><span className="map-provider naver-provider" aria-hidden="true">N</span>네이버 지도<Glyph name="external" size={16} /></a></ActionButton>
-        <ActionButton asChild variant="neutralOutline"><a href={directionsUrl('kakao', cafe)} target="_blank" rel="noopener noreferrer"><span className="map-provider kakao-provider" aria-hidden="true"><Glyph name="pin" size={17} /></span>카카오 지도<Glyph name="external" size={16} /></a></ActionButton>
+        {cafe.directionsUrl && <ActionButton asChild variant="neutralOutline"><a href={cafe.directionsUrl} target="_blank" rel="noopener noreferrer">길찾기<Glyph name="external" size={16} /></a></ActionButton>}
+        {demoCafe && <ActionButton asChild variant="neutralOutline"><a href={directionsUrl('kakao', demoCafe)} target="_blank" rel="noopener noreferrer">카카오 지도<Glyph name="external" size={16} /></a></ActionButton>}
       </BottomSheetFooter>
     </BottomSheetContent>}
   </BottomSheetRoot>
